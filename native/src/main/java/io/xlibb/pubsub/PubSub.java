@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package org.nuvindu.pubsub;
+package io.xlibb.pubsub;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
@@ -31,14 +31,14 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 
-import static org.nuvindu.pubsub.utils.Utils.AUTO_CREATE_TOPICS;
-import static org.nuvindu.pubsub.utils.Utils.CONSUME_STREAM_METHOD;
-import static org.nuvindu.pubsub.utils.Utils.IS_CLOSED;
-import static org.nuvindu.pubsub.utils.Utils.PIPE_CLASS_NAME;
-import static org.nuvindu.pubsub.utils.Utils.PIPE_FIELD_NAME;
-import static org.nuvindu.pubsub.utils.Utils.TIMER_FIELD_NAME;
-import static org.nuvindu.pubsub.utils.Utils.TOPICS;
-import static org.nuvindu.pubsub.utils.Utils.createError;
+import static io.xlibb.pubsub.utils.Utils.AUTO_CREATE_TOPICS;
+import static io.xlibb.pubsub.utils.Utils.CONSUME_STREAM_METHOD;
+import static io.xlibb.pubsub.utils.Utils.IS_CLOSED;
+import static io.xlibb.pubsub.utils.Utils.PIPE_CLASS_NAME;
+import static io.xlibb.pubsub.utils.Utils.PIPE_FIELD_NAME;
+import static io.xlibb.pubsub.utils.Utils.TIMER_FIELD_NAME;
+import static io.xlibb.pubsub.utils.Utils.TOPICS;
+import static io.xlibb.pubsub.utils.Utils.createError;
 
 /**
  * Provides a message communication model with publish/subscribe APIs.

@@ -38,28 +38,28 @@ modules = [
 ]
 
 [[package]]
-org = "nuvindu"
+org = "xlibb"
 name = "pipe"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"}
 ]
 modules = [
-	{org = "nuvindu", packageName = "pipe", moduleName = "pipe"}
+	{org = "xlibb", packageName = "pipe", moduleName = "pipe"}
 ]
 
 [[package]]
-org = "nuvindu"
+org = "xlibb"
 name = "pubsub"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.runtime"},
 	{org = "ballerina", name = "test"},
-	{org = "nuvindu", name = "pipe"}
+	{org = "xlibb", name = "pipe"}
 ]
 modules = [
-	{org = "nuvindu", packageName = "pubsub", moduleName = "pubsub"}
+	{org = "xlibb", packageName = "pubsub", moduleName = "pubsub"}
 ]
 
 

@@ -21,5 +21,5 @@ isolated function init() {
 }
 
 isolated function setModule() = @java:Method {
-    'class: "org.nuvindu.pubsub.utils.ModuleUtils"
+    'class: "io.xlibb.pubsub.utils.ModuleUtils"
 } external;

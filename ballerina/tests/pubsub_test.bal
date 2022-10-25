@@ -38,7 +38,7 @@ function testPubSub() returns error? {
 }
 function testGracefulShutdown() returns error? {
     PubSub pubsub = new();
-    string expectedValue = "No any event is available in the closed pipe.";
+    string expectedValue = "No events available in the pipe.";
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.gracefulShutdown();
     record {|string value;|}|error? msg = subscribe.next();
@@ -62,7 +62,7 @@ function testGracefulShutdown() returns error? {
 }
 function testForceShutdown() returns error? {
     PubSub pubsub = new();
-    string expectedValue = "No any event is available in the closed pipe.";
+    string expectedValue = "No events available in the pipe.";
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.forceShutdown();
     record {|string value;|}|error? msg = subscribe.next();

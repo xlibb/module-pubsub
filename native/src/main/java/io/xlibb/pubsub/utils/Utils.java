@@ -14,14 +14,14 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package org.nuvindu.pubsub.utils;
+package io.xlibb.pubsub.utils;
 
 import io.ballerina.runtime.api.creators.ErrorCreator;
 import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BString;
 
-import static org.nuvindu.pubsub.utils.ModuleUtils.getModule;
+import static io.xlibb.pubsub.utils.ModuleUtils.getModule;
 
 /**
  *  This class contains utility methods for the PubSub module.

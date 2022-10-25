@@ -11,7 +11,7 @@ PubSub is a message communication model that consists of `publishers` sending da
 A `pubsub:PubSub` instance can be created as follows. It has a parameter to enable auto-creation of the non-existing topics when publishing/subscribing. The default value is set as `true`.
 
 ```ballerina
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new(autoCreateTopics = true);
@@ -32,7 +32,7 @@ This method creates a new topic in the PubSub. There is a parameter called `auto
 If it is set to false, topics have to be manually created as below. The topic name must be provided.
 
 ```ballerina
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new(autoCreateTopics = false);
@@ -48,7 +48,7 @@ Events can be published into a topic using this method. Once an event is publish
 The `publish` method requires a topic name, an event that needs to be published and a timeout as parameters. The `timeout` is a default parameter and it will be the maximum waiting period for an event to be hold in the buffer when a pipe attached to a subscriber is full.
 
 ```ballerina
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new();
@@ -66,7 +66,7 @@ Each subscriber will receive a `stream` that is attached to a separate `pipe` in
 
 ```ballerina
 import ballerina/io;
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new();
@@ -91,7 +91,7 @@ There are two approaches for closing a PubSub.
 This method is to immediately shut down the PubSub. It closes all the pipes in the PubSub using the `immediateClose` method. After that, it will remove all the topics from the PubSub.
 
 ```ballerina
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new();
@@ -108,7 +108,7 @@ In the PubSub model, pipes are the intermediator for publishers and subscribers.
 ```ballerina
 import ballerina/io;
 import ballerina/lang.runtime;
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new();

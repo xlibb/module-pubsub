@@ -1,13 +1,13 @@
 [package]
-org = "nuvindu"
+org = "xlibb"
 name = "pubsub"
-version = "1.0.0"
-authors = ["Nuvindu"]
+version = "1.0.1"
+authors = ["xlibb"]
 keywords = ["pubsub"]
-repository = "https://github.com/Nuvindu/module-pubsub"
+repository = "https://github.com/xlibb/module-pubsub"
 license = ["Apache-2.0"]
 distribution = "2201.2.0"
 icon = "icon.png"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/pubsub-native-1.0.0.jar"
+path = "../native/build/libs/pubsub-native-1.0.1-SNAPSHOT.jar"

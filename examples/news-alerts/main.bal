@@ -15,8 +15,8 @@
 // under the License.
 
 import ballerina/io;
-import nuvindu/pubsub;
 import ballerina/lang.runtime;
+import xlibb/pubsub;
 
 public function main() returns error? {
     pubsub:PubSub pubsub = new();

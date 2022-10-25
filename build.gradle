@@ -45,7 +45,7 @@ allprojects {
         }
 
         maven {
-            url = 'https://maven.pkg.github.com/Nuvindu/*'
+            url = 'https://maven.pkg.github.com/xlibb/*'
             credentials {
                 username System.getenv("packageUser")
                 password System.getenv("packagePAT")
@@ -67,11 +67,11 @@ subprojects {
 
     dependencies {
         /* Standard libraries */
-        ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${project.stdlibIoVersion}"
-        ballerinaStdLibs "io.ballerina.stdlib:log-ballerina:${project.stdlibLogVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${stdlibIoVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:log-ballerina:${stdlibLogVersion}"
         ballerinaStdLibs "io.ballerina.stdlib:observe-ballerina:${observeVersion}"
         ballerinaStdLibs "io.ballerina:observe-ballerina:${observeInternalVersion}"
-        ballerinaStdLibs "org.nuvindu.pipe:pipe-ballerina:${pipeVersion}"
+        ballerinaStdLibs "io.xlibb:pipe-ballerina:${pipeVersion}"
     }
 }
 
