@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import nuvindu/pubsub;
+import xlibb/pubsub;
 import ballerina/test;
 
 @test:Config {

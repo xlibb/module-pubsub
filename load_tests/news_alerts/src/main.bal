@@ -1,5 +1,5 @@
 import ballerina/http;
-import nuvindu/pubsub;
+import xlibb/pubsub;
 
 service / on new http:Listener(9090) {
     pubsub:PubSub pubsub;

@@ -16,7 +16,7 @@
 
 import ballerina/jballerina.java;
 import ballerina/lang.runtime;
-import nuvindu/pipe;
+import xlibb/pipe;
 
 # An Events Transmission Model with Publish/Subscribe APIs.
 public class PubSub {
@@ -111,7 +111,7 @@ public class PubSub {
     public isolated function subscribe(string topicName, int 'limit = 5, decimal timeout = 30,
                                        typedesc<any> typeParam = <>)
         returns stream<typeParam, error?>|Error = @java:Method {
-        'class: "org.nuvindu.pubsub.PubSub"
+        'class: "PubSub"
     } external;
 
     private isolated function unsubscribe(string topicName, pipe:Pipe pipe) returns Error? {

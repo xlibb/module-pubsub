@@ -14,7 +14,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package org.nuvindu.pubsub.utils;
+package io.xlibb.pubsub.utils;
 
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Module;

@@ -1,5 +1,5 @@
 [package]
-org = "nuvindu_dias"
+org = "xlibb"
 name = "pubsub_load_test"
 version = "0.1.0"
 distribution = "2201.2.0-rc1"

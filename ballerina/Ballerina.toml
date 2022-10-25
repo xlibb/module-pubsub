@@ -1,10 +1,10 @@
 [package]
-org = "nuvindu"
+org = "xlibb"
 name = "pubsub"
 version = "1.0.0"
-authors = ["Nuvindu"]
+authors = ["xlibb"]
 keywords = ["pubsub"]
-repository = "https://github.com/Nuvindu/module-pubsub"
+repository = "https://github.com/xlibb/module-pubsub"
 license = ["Apache-2.0"]
 distribution = "2201.2.0"
 icon = "icon.png"
