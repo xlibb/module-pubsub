@@ -22,8 +22,9 @@ import ballerina/test;
 }
 function testPubSub() returns error? {
     pubsub:PubSub pubsub = new();
-    stream<any, error?> subscribe = check pubsub.subscribe("testTopic");
     string expectedValue = "data";
+    check pubsub.publish("testTopic", expectedValue);
+    stream<any, error?> subscribe = check pubsub.subscribe("testTopic");
     check pubsub.publish("testTopic", expectedValue);
     record {|any value;|}? 'record = check subscribe.next();
     if 'record != () {

@@ -71,8 +71,9 @@ public class PubSub {
                 removedPipes.push(pipe);
             }
         }
+        Error? unsubscribeResult = self.unsubscribeClosedPipes(removedPipes, topicName);
         check self.waitForProduceCompletion(waitingQueue);
-        check self.unsubscribeClosedPipes(removedPipes, topicName);
+        return unsubscribeResult;
     }
 
     private isolated function produceEvents(pipe:Pipe pipe, any event, decimal timeout) returns pipe:Error? {

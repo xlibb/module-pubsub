@@ -79,8 +79,9 @@ public class PubSub {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public static void addSubscriber(BObject pubsub, BString topicName, BObject pipe) throws BError {
-        BMap topics = pubsub.getMapValue(TOPICS);
+        BMap<BString, Object> topics = pubsub.getMapValue(TOPICS);
         boolean autoCreateTopics = pubsub.getBooleanValue(AUTO_CREATE_TOPICS);
         if (!topics.containsKey(topicName)) {
             if (!autoCreateTopics) {
@@ -88,11 +89,9 @@ public class PubSub {
             }
             BArray pipes = ValueCreator.createArrayValue(TypeCreator.createArrayType(pipe.getType()));
             pipes.append(pipe);
-            topics.put(topicName, pipes);
         } else {
             BArray pipes = (BArray) topics.get(topicName);
             pipes.append(pipe);
-            topics.put(topicName, pipes);
         }
     }
 }
