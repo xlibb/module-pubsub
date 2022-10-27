@@ -26,11 +26,12 @@ function testPubSub() returns error? {
     json expectedValue = {
         hello: "World"
     };
-    stream<json, error?> subscribe = check pubsub.subscribe(topicName);
-    check pubsub.publish(topicName, expectedValue);
+    check pubsub.publish(topicName, expectedValue, 5);
+    stream<json, error?> subscribe = check pubsub.subscribe(topicName, 10);
+    check pubsub.publish(topicName, expectedValue, 5);
     record {|json value;|}? msg = check subscribe.next();
     json actualValue = (<record {|json value;|}>msg).value;
-    test:assertEquals(expectedValue, actualValue);
+    test:assertEquals(actualValue, expectedValue);
 }
 
 @test:Config {
@@ -38,23 +39,23 @@ function testPubSub() returns error? {
 }
 function testGracefulShutdown() returns error? {
     PubSub pubsub = new();
-    string expectedValue = "No events available in the pipe.";
+    check pubsub.publish("topic", "hello", 5);
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.gracefulShutdown();
     record {|string value;|}|error? msg = subscribe.next();
-    test:assertTrue(msg is error);
-    string actualValue = (<error>msg).message();
-    test:assertEquals(expectedValue, actualValue);
+    if msg !is () {
+        test:assertFail(string `Expected "()", received ${(typeof msg).toString()}`);
+    }
 
-    expectedValue = "Users cannot subscribe to a closed PubSub.";
+    string expectedValue = "Users cannot subscribe to a closed PubSub.";
     stream<string, error?>|Error new_subscriber = pubsub.subscribe("topic");
     test:assertTrue(new_subscriber is Error);
-    test:assertEquals(expectedValue, (<Error>new_subscriber).message());
+    test:assertEquals((<Error>new_subscriber).message(), expectedValue);
 
     expectedValue = "Events cannot be published to a closed PubSub.";
     Error? publish = pubsub.publish("topic", expectedValue);
     test:assertTrue(publish is Error);
-    test:assertEquals(expectedValue, (<Error>publish).message());
+    test:assertEquals((<Error>publish).message(), expectedValue);
 }
 
 @test:Config {
@@ -62,23 +63,23 @@ function testGracefulShutdown() returns error? {
 }
 function testForceShutdown() returns error? {
     PubSub pubsub = new();
-    string expectedValue = "No events available in the pipe.";
+    check pubsub.publish("topic", "hello", 5);
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.forceShutdown();
     record {|string value;|}|error? msg = subscribe.next();
-    test:assertTrue(msg is error);
-    string actualValue = (<error>msg).message();
-    test:assertEquals(expectedValue, actualValue);
+    if msg !is () {
+        test:assertFail(string `Expected "()", received ${(typeof msg).toString()}`);
+    }
 
-    expectedValue = "Users cannot subscribe to a closed PubSub.";
+    string expectedValue = "Users cannot subscribe to a closed PubSub.";
     stream<string, error?>|Error new_subscriber = pubsub.subscribe("topic");
     test:assertTrue(new_subscriber is Error);
-    test:assertEquals(expectedValue, (<Error>new_subscriber).message());
+    test:assertEquals((<Error>new_subscriber).message(), expectedValue);
 
     expectedValue = "Events cannot be published to a closed PubSub.";
     Error? publish = pubsub.publish("topic", expectedValue);
     test:assertTrue(publish is Error);
-    test:assertEquals(expectedValue, (<Error>publish).message());
+    test:assertEquals((<Error>publish).message(), expectedValue);
 }
 
 @test:Config {
@@ -94,7 +95,7 @@ function testCreatingTopics() returns error? {
     check pubsub.publish(topicName, expectedValue);
     record {|string value;|}? msg = check subscribe.next();
     string actualValue = (<record {|string value;|}>msg).value;
-    test:assertEquals(expectedValue, actualValue);
+    test:assertEquals(actualValue, expectedValue);
 }
 
 @test:Config {
@@ -108,7 +109,7 @@ function testAutoCreationTopicInPublishing() returns error? {
     Error? topic = pubsub.createTopic(topicName);
     test:assertTrue(topic is Error);
     string expectedValue = string `Topic "${topicName}" already exists.`;
-    test:assertEquals(expectedValue, (<Error>topic).message());
+    test:assertEquals((<Error>topic).message(), expectedValue);
 }
 
 @test:Config {
@@ -133,7 +134,7 @@ function testWaitingInGracefulShutdown() returns error? {
         test:assertTrue(next !is error?);
         if next is record {|string value;|} {
             string actualValue = next.value;
-            test:assertEquals(expectedValue, actualValue);
+            test:assertEquals(actualValue, expectedValue);
         }
     }
 }
