@@ -26,7 +26,6 @@ function testPubSub() returns error? {
     json expectedValue = {
         hello: "World"
     };
-    check pubsub.publish(topicName, expectedValue, 5);
     stream<json, error?> subscribe = check pubsub.subscribe(topicName, 10);
     check pubsub.publish(topicName, expectedValue, 5);
     record {|json value;|}? msg = check subscribe.next();
@@ -39,7 +38,6 @@ function testPubSub() returns error? {
 }
 function testGracefulShutdown() returns error? {
     PubSub pubsub = new();
-    check pubsub.publish("topic", "hello", 5);
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.gracefulShutdown();
     record {|string value;|}|error? msg = subscribe.next();
@@ -63,7 +61,6 @@ function testGracefulShutdown() returns error? {
 }
 function testForceShutdown() returns error? {
     PubSub pubsub = new();
-    check pubsub.publish("topic", "hello", 5);
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.forceShutdown();
     record {|string value;|}|error? msg = subscribe.next();

@@ -89,9 +89,11 @@ public class PubSub {
             }
             BArray pipes = ValueCreator.createArrayValue(TypeCreator.createArrayType(pipe.getType()));
             pipes.append(pipe);
+            topics.put(topicName, pipes);
         } else {
             BArray pipes = (BArray) topics.get(topicName);
             pipes.append(pipe);
+            topics.put(topicName, pipes);
         }
     }
 }
