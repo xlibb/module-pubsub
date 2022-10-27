@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.1.1] - 2022-10-27
+
 ### Fixed
 - [[#4] Fix Previous Subscribers not Receiving Events from New Publishers](https://github.com/xlibb/module-pubsub/issues/4)
 
