@@ -58,7 +58,6 @@ function testSubscribingToClosedPubSub() returns error? {
 function testClosingStreams() returns error? {
     PubSub pubsub = new();
     string topic = "topic";
-    check pubsub.publish(topic, "hello", 5);
     stream<string, error?> newStream1 = check pubsub.subscribe(topic);
     stream<string, error?> newStream2 = check pubsub.subscribe(topic);
     check newStream2.close();
@@ -133,7 +132,15 @@ function testClosingPubSubWithClosedStream() returns error? {
     PubSub pubsub = new();
     stream<string, error?> subscriberStream = check pubsub.subscribe("topic");
     check subscriberStream.close();
-    check pubsub.forceShutdown();
+    Error? result = pubsub.forceShutdown();
+    test:assertTrue(result is Error);
+    string expectedMessage = "Failed to shut down the pubsub";
+    Error pubsubError = <Error>result;
+    test:assertEquals(pubsubError.message(), expectedMessage);
+    error? cause = pubsubError.cause();
+    test:assertTrue(cause is error);
+    expectedMessage = "Closing of a closed pipe is not allowed.";
+    test:assertEquals((<error>cause).message(), expectedMessage);
 }
 
 @test:Config {
@@ -143,10 +150,9 @@ function testTimeoutErrorsInPubSub() returns error? {
     PubSub pubsub = new();
     string topicName = "topic";
     string expectedValue = "event";
-    Error? publish = pubsub.publish(topicName, expectedValue, 1);
     stream<string, error?> subscriber_1 = check pubsub.subscribe("topic", 0);
     stream<string, error?> subscriber_2 = check pubsub.subscribe("topic", 5);
-    publish = pubsub.publish(topicName, expectedValue, 1);
+    Error? publish = pubsub.publish(topicName, expectedValue, 1);
     test:assertTrue(publish is Error);
     string expectedError = "Failed to publish events to some subscribers.";
     test:assertEquals((<Error>publish).message(), expectedError);
