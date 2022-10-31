@@ -40,7 +40,6 @@ public class Utils {
     public static final String CONSUME_STREAM_METHOD = "consumeStream";
     public static final String ERROR_TYPE = "Error";
     public static final String PIPE_CLASS_NAME = "Pipe";
-    public static final String TIMER = "Timer";
 
     public static BError createError(String message) {
         return ErrorCreator.createError(getModule(), ERROR_TYPE, StringUtils.fromString(message), null, null);

@@ -41,18 +41,18 @@ public class PubSub {
     #
     # + topicName - The name of the topic which is used to publish events
     # + event - Event that needs to be published to PubSub. Can be `any` type
-    # + timeout - The maximum waiting period to hold events
+    # + timeout - The maximum waiting period to hold events. Set the timeout to `-1` to wait without a time limit.
     # + return - Returns `()` if event is successfully published. Otherwise, returns a `pubsub:Error`
     public function publish(string topicName, any event, decimal timeout = 30) returns Error? {
         if self.isClosed {
-            return error Error("Events cannot be published to a closed PubSub.");
+            return error Error("Events cannot be published to a closed PubSub");
         }
         if event == () {
-            return error Error("Nil values cannot be published to a PubSub.");
+            return error Error("Nil values cannot be published to a PubSub");
         }
         if !self.topics.hasKey(topicName) {
             if !self.autoCreateTopics {
-                return error Error(string `Topic "${topicName}" does not exist.`);
+                return error Error(string `Topic "${topicName}" does not exist`);
             }
             check self.createTopic(topicName);
         }
@@ -89,7 +89,7 @@ public class PubSub {
             }
         }
         if pipeError != () {
-            return error Error("Failed to publish events to some subscribers.", pipeError);
+            return error Error("Failed to publish events to some subscribers", pipeError);
         }
     }
 
@@ -104,7 +104,7 @@ public class PubSub {
     #
     # + topicName - The name of the topic which is used to subscribe
     # + 'limit - The maximum number of entries that are held in the pipe at once
-    # + timeout - The maximum waiting period to receive events
+    # + timeout - The maximum waiting period to receive events. Set the timeout to `-1` to wait without a time limit.
     # + typeParam - The `type` of data that is needed to be consumed. When not provided, the type is inferred
     # using the expected type from the function
     # + return - Returns `stream` if the user is successfully subscribed to the topic. Otherwise returns a
@@ -135,11 +135,11 @@ public class PubSub {
     # + return - Returns `()` if the topic is successfully added to the PubSub. Otherwise returns a `pubsub:Error`
     public isolated function createTopic(string topicName) returns Error? {
         if self.isClosed {
-            return error Error("Topics cannot be created in a closed PubSub.");
+            return error Error("Topics cannot be created in a closed PubSub");
         }
         lock {
             if self.topics.hasKey(topicName) {
-                return error Error(string `Topic "${topicName}" already exists.`);
+                return error Error(string `Topic "${topicName}" already exists`);
             }
             self.topics[topicName] = [];
         }
@@ -150,8 +150,11 @@ public class PubSub {
     # + timeout - The grace period to wait until the pipes are closed
     # + return - Returns `()`, if the PubSub is successfully shutdown. Otherwise returns a `pubsub:Error`
     public isolated function gracefulShutdown(decimal timeout = 30) returns Error? {
+        if timeout < 0d {
+            return error Error("Shutdown timout cannot be a negative value");
+        }
         if self.isClosed {
-            return error Error("Closing of a closed PubSub is not allowed.");
+            return error Error("Closing of a closed PubSub is not allowed");
         }
         self.isClosed = true;
         lock {
@@ -167,7 +170,7 @@ public class PubSub {
     # + return - Returns `()`, if the PubSub is successfully shutdown. Otherwise returns a `pubsub:Error`
     public isolated function forceShutdown() returns Error? {
         if self.isClosed && self.topics == {} {
-            return error Error("Closing of a closed PubSub is not allowed.");
+            return error Error("Closing of a closed PubSub is not allowed");
         }
         self.isClosed = true;
         lock {

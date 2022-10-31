@@ -58,7 +58,7 @@ ballerina {
     packageOrganization = packageOrg
     module = packageName
     langVersion = ballerinaLangVersion
-    testCoverageParam = "--code-coverage --coverage-format=xml --includes=org.xlibb.pubsub.*:xlibb.pubsub*"
+    testCoverageParam = "--code-coverage --coverage-format=xml --includes=io.xlibb.pubsub.*:xlibb.pubsub*"
 }
 
 task updateTomlFiles {

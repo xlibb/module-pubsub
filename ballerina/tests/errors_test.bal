@@ -22,7 +22,7 @@ import ballerina/test;
 function testPublishingToNonExistingTopic() returns error? {
     PubSub pubsub = new(autoCreateTopics = false);
     string topicName = "topic";
-    string expectedValue = string `Topic "${topicName}" does not exist.`;
+    string expectedValue = string `Topic "${topicName}" does not exist`;
     Error? publish = pubsub.publish(topicName, "hello");
     test:assertTrue(publish is Error);
     test:assertEquals((<Error>publish).message(), expectedValue);
@@ -34,7 +34,7 @@ function testPublishingToNonExistingTopic() returns error? {
 function testSubscribingToNonExistingTopic() returns error? {
     PubSub pubsub = new(autoCreateTopics = false);
     string topicName = "topic";
-    string expectedValue = string `Topic "${topicName}" does not exist.`;
+    string expectedValue = string `Topic "${topicName}" does not exist`;
     stream<string, error?>|Error subscribe = pubsub.subscribe(topicName);
     test:assertTrue(subscribe is Error);
     test:assertEquals((<Error>subscribe).message(), expectedValue);
@@ -45,10 +45,10 @@ function testSubscribingToNonExistingTopic() returns error? {
 }
 function testSubscribingToClosedPubSub() returns error? {
     PubSub pubsub = new(false);
-    check pubsub.gracefulShutdown();
+    check pubsub.gracefulShutdown(5);
     stream<string, error?>|Error subscribe = pubsub.subscribe("topic");
     test:assertTrue(subscribe is Error);
-    string expectedValue = "Users cannot subscribe to a closed PubSub.";
+    string expectedValue = "Users cannot subscribe to a closed PubSub";
     test:assertEquals((<Error>subscribe).message(), expectedValue);
 }
 
@@ -81,7 +81,7 @@ function testCreatingExistingTopics() returns error? {
     check pubsub.createTopic(topicName);
     Error? topic = pubsub.createTopic(topicName);
     test:assertTrue(topic is Error);
-    string expectedValue = string `Topic "${topicName}" already exists.`;
+    string expectedValue = string `Topic "${topicName}" already exists`;
     test:assertEquals((<Error>topic).message(), expectedValue);
 }
 
@@ -94,7 +94,7 @@ function testCreatingExistingTopicsToAutoCreateTopicsEnabledPubSub() returns err
     check pubsub.publish(topicName, "event");
     Error? topic = pubsub.createTopic(topicName);
     test:assertTrue(topic is Error);
-    string expectedValue = string `Topic "${topicName}" already exists.`;
+    string expectedValue = string `Topic "${topicName}" already exists`;
     test:assertEquals((<Error>topic).message(), expectedValue);
 }
 
@@ -107,7 +107,7 @@ function testCreatingTopicsInClosedPubSub() returns error? {
     check pubsub.forceShutdown();
     Error? topic = pubsub.createTopic(topicName);
     test:assertTrue(topic is Error);
-    string expectedValue = "Topics cannot be created in a closed PubSub.";
+    string expectedValue = "Topics cannot be created in a closed PubSub";
     test:assertEquals((<Error>topic).message(), expectedValue);
 }
 
@@ -121,7 +121,7 @@ function testPublishingNullValuesToTopics() returns error? {
     test:assertTrue(subscriber !is Error);
     Error? publish = pubsub.publish(topicName, ());
     test:assertTrue(publish is Error);
-    string expectedValue = "Nil values cannot be published to a PubSub.";
+    string expectedValue = "Nil values cannot be published to a PubSub";
     test:assertEquals((<Error>publish).message(), expectedValue);
 }
 
@@ -139,7 +139,7 @@ function testClosingPubSubWithClosedStream() returns error? {
     test:assertEquals(pubsubError.message(), expectedMessage);
     error? cause = pubsubError.cause();
     test:assertTrue(cause is error);
-    expectedMessage = "Closing of a closed pipe is not allowed.";
+    expectedMessage = "Closing of a closed pipe is not allowed";
     test:assertEquals((<error>cause).message(), expectedMessage);
 }
 
@@ -154,9 +154,9 @@ function testTimeoutErrorsInPubSub() returns error? {
     stream<string, error?> subscriber_2 = check pubsub.subscribe("topic", 5);
     Error? publish = pubsub.publish(topicName, expectedValue, 1);
     test:assertTrue(publish is Error);
-    string expectedError = "Failed to publish events to some subscribers.";
+    string expectedError = "Failed to publish events to some subscribers";
     test:assertEquals((<Error>publish).message(), expectedError);
-    expectedError = "Operation has timed out.";
+    expectedError = "Operation has timed out";
     test:assertEquals((<error>((<Error>publish).cause())).message(), expectedError);
 
     record {|string value;|}|error? event_stream_1 = subscriber_1.next();
@@ -176,7 +176,7 @@ function testClosingOfClosedPubSub() returns error? {
     check pubsub.forceShutdown();
     Error? forceShutdown = pubsub.forceShutdown();
     test:assertTrue(forceShutdown is Error);
-    string expectedValue = "Closing of a closed PubSub is not allowed.";
+    string expectedValue = "Closing of a closed PubSub is not allowed";
     test:assertEquals((<Error>forceShutdown).message(), expectedValue);
 }
 
@@ -185,10 +185,10 @@ function testClosingOfClosedPubSub() returns error? {
 }
 function testClosingOfGracefullyClosedPubSub() returns error? {
     PubSub pubsub = new();
-    check pubsub.gracefulShutdown();
+    check pubsub.gracefulShutdown(5);
     Error? forceShutdown = pubsub.forceShutdown();
     test:assertTrue(forceShutdown is Error);
-    string expectedValue = "Closing of a closed PubSub is not allowed.";
+    string expectedValue = "Closing of a closed PubSub is not allowed";
     test:assertEquals((<Error>forceShutdown).message(), expectedValue);
 }
 
@@ -197,10 +197,10 @@ function testClosingOfGracefullyClosedPubSub() returns error? {
 }
 function testGracefullyClosingOfGracefullyClosedPubSub() returns error? {
     PubSub pubsub = new();
-    check pubsub.gracefulShutdown();
-    Error? forceShutdown = pubsub.gracefulShutdown();
+    check pubsub.gracefulShutdown(5);
+    Error? forceShutdown = pubsub.gracefulShutdown(5);
     test:assertTrue(forceShutdown is Error);
-    string expectedValue = "Closing of a closed PubSub is not allowed.";
+    string expectedValue = "Closing of a closed PubSub is not allowed";
     test:assertEquals((<Error>forceShutdown).message(), expectedValue);
 }
 
@@ -210,8 +210,19 @@ function testGracefullyClosingOfGracefullyClosedPubSub() returns error? {
 function testGracefullyClosingOfClosedPubSub() returns error? {
     PubSub pubsub = new();
     check pubsub.forceShutdown();
-    Error? forceShutdown = pubsub.gracefulShutdown();
+    Error? forceShutdown = pubsub.gracefulShutdown(5);
     test:assertTrue(forceShutdown is Error);
-    string expectedValue = "Closing of a closed PubSub is not allowed.";
+    string expectedValue = "Closing of a closed PubSub is not allowed";
     test:assertEquals((<Error>forceShutdown).message(), expectedValue);
+}
+
+@test:Config {
+    groups: ["errors"]
+}
+function testInvalidTimoutForGracefulShutdown() returns error? {
+    PubSub pubsub = new();
+    Error? result = pubsub.gracefulShutdown(-5);
+    test:assertTrue(result is Error);
+    string expectedValue = "Shutdown timout cannot be a negative value";
+    test:assertEquals((<Error>result).message(), expectedValue);
 }

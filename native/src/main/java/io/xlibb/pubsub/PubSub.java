@@ -19,7 +19,6 @@ package io.xlibb.pubsub;
 import io.ballerina.runtime.api.Environment;
 import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.PredefinedTypes;
-import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StreamType;
@@ -48,7 +47,7 @@ public class PubSub {
     public static Object subscribe(Environment environment, BObject pubsub, BString topicName, int limit,
                                    BDecimal timeout, BTypedesc typeParam) {
         if ((pubsub.get(IS_CLOSED)).equals(true)) {
-            return createError("Users cannot subscribe to a closed PubSub.");
+            return createError("Users cannot subscribe to a closed PubSub");
         }
         BObject defaultPipe = pubsub.getObjectValue(PIPE_FIELD_NAME);
         BObject defaultTimer = pubsub.getObjectValue(TIMER_FIELD_NAME);
@@ -60,22 +59,14 @@ public class PubSub {
             return bError;
         }
         Object[] arguments = new Object[]{timeout, true, typeParam, true};
-        Future futureResult = environment.markAsync();
+        Future future = environment.markAsync();
         StreamType streamType = TypeCreator.createStreamType(typeParam.getDescribingType(),
-                TypeCreator.createUnionType(PredefinedTypes.TYPE_ERROR, PredefinedTypes.TYPE_NULL));
+                                                             TypeCreator.createUnionType(PredefinedTypes.TYPE_ERROR,
+                                                                                         PredefinedTypes.TYPE_NULL));
+        MethodCallback callback = new MethodCallback(future);
         environment.getRuntime()
-                .invokeMethodAsyncConcurrently(pipe, CONSUME_STREAM_METHOD, null, null,
-                                               new Callback() {
-                                                    @Override
-                                                    public void notifySuccess(Object result) {
-                                                        futureResult.complete(result);
-                                                    }
-
-                                                    @Override
-                                                    public void notifyFailure(BError bError) {
-                                                        futureResult.complete(createError(bError.getMessage()));
-                                                    }
-                                               }, null, streamType, arguments);
+                .invokeMethodAsyncConcurrently(pipe, CONSUME_STREAM_METHOD, null, null, callback, null, streamType,
+                                               arguments);
         return null;
     }
 
@@ -85,7 +76,7 @@ public class PubSub {
         boolean autoCreateTopics = pubsub.getBooleanValue(AUTO_CREATE_TOPICS);
         if (!topics.containsKey(topicName)) {
             if (!autoCreateTopics) {
-                throw createError("Topic \"" + topicName + "\" does not exist.");
+                throw createError("Topic \"" + topicName + "\" does not exist");
             }
             BArray pipes = ValueCreator.createArrayValue(TypeCreator.createArrayType(pipe.getType()));
             pipes.append(pipe);

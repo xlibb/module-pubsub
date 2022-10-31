@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+### Changed
+- [[#7] Supporting PubSub Actions Without a Timeout](https://github.com/xlibb/module-pubsub/issues/7)
+
 ## [1.1.1] - 2022-10-27
 
 ### Fixed
