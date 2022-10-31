@@ -215,3 +215,14 @@ function testGracefullyClosingOfClosedPubSub() returns error? {
     string expectedValue = "Closing of a closed PubSub is not allowed";
     test:assertEquals((<Error>forceShutdown).message(), expectedValue);
 }
+
+@test:Config {
+    groups: ["errors"]
+}
+function testInvalidTimoutForGracefulShutdown() returns error? {
+    PubSub pubsub = new();
+    Error? result = pubsub.gracefulShutdown(-5);
+    test:assertTrue(result is Error);
+    string expectedValue = "Shutdown timout cannot be a negative value";
+    test:assertEquals((<Error>result).message(), expectedValue);
+}
