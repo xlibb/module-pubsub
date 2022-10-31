@@ -45,12 +45,12 @@ function testGracefulShutdown() returns error? {
         test:assertFail(string `Expected "()", received ${(typeof msg).toString()}`);
     }
 
-    string expectedValue = "Users cannot subscribe to a closed PubSub.";
+    string expectedValue = "Users cannot subscribe to a closed PubSub";
     stream<string, error?>|Error new_subscriber = pubsub.subscribe("topic");
     test:assertTrue(new_subscriber is Error);
     test:assertEquals((<Error>new_subscriber).message(), expectedValue);
 
-    expectedValue = "Events cannot be published to a closed PubSub.";
+    expectedValue = "Events cannot be published to a closed PubSub";
     Error? publish = pubsub.publish("topic", expectedValue);
     test:assertTrue(publish is Error);
     test:assertEquals((<Error>publish).message(), expectedValue);
@@ -68,12 +68,12 @@ function testForceShutdown() returns error? {
         test:assertFail(string `Expected "()", received ${(typeof msg).toString()}`);
     }
 
-    string expectedValue = "Users cannot subscribe to a closed PubSub.";
+    string expectedValue = "Users cannot subscribe to a closed PubSub";
     stream<string, error?>|Error new_subscriber = pubsub.subscribe("topic");
     test:assertTrue(new_subscriber is Error);
     test:assertEquals((<Error>new_subscriber).message(), expectedValue);
 
-    expectedValue = "Events cannot be published to a closed PubSub.";
+    expectedValue = "Events cannot be published to a closed PubSub";
     Error? publish = pubsub.publish("topic", expectedValue);
     test:assertTrue(publish is Error);
     test:assertEquals((<Error>publish).message(), expectedValue);
@@ -105,7 +105,7 @@ function testAutoCreationTopicInPublishing() returns error? {
     test:assertTrue(publish !is Error);
     Error? topic = pubsub.createTopic(topicName);
     test:assertTrue(topic is Error);
-    string expectedValue = string `Topic "${topicName}" already exists.`;
+    string expectedValue = string `Topic "${topicName}" already exists`;
     test:assertEquals((<Error>topic).message(), expectedValue);
 }
 
@@ -121,7 +121,7 @@ function testWaitingInGracefulShutdown() returns error? {
     test:assertTrue(publish !is Error);
 
     worker A {
-        Error? close = pubsub.gracefulShutdown();
+        Error? close = pubsub.gracefulShutdown(5);
         test:assertTrue(close !is Error);
     }
 

@@ -45,14 +45,14 @@ public class PubSub {
     # + return - Returns `()` if event is successfully published. Otherwise, returns a `pubsub:Error`
     public function publish(string topicName, any event, decimal timeout = 30) returns Error? {
         if self.isClosed {
-            return error Error("Events cannot be published to a closed PubSub.");
+            return error Error("Events cannot be published to a closed PubSub");
         }
         if event == () {
-            return error Error("Nil values cannot be published to a PubSub.");
+            return error Error("Nil values cannot be published to a PubSub");
         }
         if !self.topics.hasKey(topicName) {
             if !self.autoCreateTopics {
-                return error Error(string `Topic "${topicName}" does not exist.`);
+                return error Error(string `Topic "${topicName}" does not exist`);
             }
             check self.createTopic(topicName);
         }
@@ -89,7 +89,7 @@ public class PubSub {
             }
         }
         if pipeError != () {
-            return error Error("Failed to publish events to some subscribers.", pipeError);
+            return error Error("Failed to publish events to some subscribers", pipeError);
         }
     }
 
@@ -135,11 +135,11 @@ public class PubSub {
     # + return - Returns `()` if the topic is successfully added to the PubSub. Otherwise returns a `pubsub:Error`
     public isolated function createTopic(string topicName) returns Error? {
         if self.isClosed {
-            return error Error("Topics cannot be created in a closed PubSub.");
+            return error Error("Topics cannot be created in a closed PubSub");
         }
         lock {
             if self.topics.hasKey(topicName) {
-                return error Error(string `Topic "${topicName}" already exists.`);
+                return error Error(string `Topic "${topicName}" already exists`);
             }
             self.topics[topicName] = [];
         }
@@ -151,7 +151,7 @@ public class PubSub {
     # + return - Returns `()`, if the PubSub is successfully shutdown. Otherwise returns a `pubsub:Error`
     public isolated function gracefulShutdown(decimal timeout = 30) returns Error? {
         if self.isClosed {
-            return error Error("Closing of a closed PubSub is not allowed.");
+            return error Error("Closing of a closed PubSub is not allowed");
         }
         self.isClosed = true;
         lock {
@@ -167,7 +167,7 @@ public class PubSub {
     # + return - Returns `()`, if the PubSub is successfully shutdown. Otherwise returns a `pubsub:Error`
     public isolated function forceShutdown() returns Error? {
         if self.isClosed && self.topics == {} {
-            return error Error("Closing of a closed PubSub is not allowed.");
+            return error Error("Closing of a closed PubSub is not allowed");
         }
         self.isClosed = true;
         lock {

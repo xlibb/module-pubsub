@@ -38,7 +38,7 @@ function testPubSub() returns error? {
 function testGracefulCloseInPubSub() returns error? {
     pubsub:PubSub pubsub = new();
     check pubsub.gracefulShutdown();
-    string expectedValue = "Events cannot be published to a closed PubSub.";
+    string expectedValue = "Events cannot be published to a closed PubSub";
     error? publish = pubsub.publish("topic", "data");
     test:assertTrue(publish is error, "Assertion failed: Data is published to a closed PubSub.");
     if publish is error {
