@@ -43,6 +43,7 @@ import static io.xlibb.pubsub.utils.Utils.createError;
  * Provides a message communication model with publish/subscribe APIs.
  */
 public class PubSub {
+    private PubSub() {}
 
     public static Object subscribe(Environment environment, BObject pubsub, BString topicName, int limit,
                                    BDecimal timeout, BTypedesc typeParam) {
