@@ -19,11 +19,11 @@ import ballerina/lang.runtime;
 import xlibb/pipe;
 
 # An Events Transmission Model with Publish/Subscribe APIs.
-public class PubSub {
-    private map<pipe:Pipe[]> topics;
-    private boolean isClosed;
-    private boolean autoCreateTopics;
-    private pipe:Pipe pipe;
+public isolated class PubSub {
+    private final map<pipe:Pipe[]> topics;
+    private boolean closed;
+    private final boolean autoCreateTopics;
+    private final pipe:Pipe pipe;
     private final pipe:Timer timer;
 
     # Creates a new `pubsub:PubSub` instance.
@@ -31,38 +31,48 @@ public class PubSub {
     # + autoCreateTopics - To enable/disable auto creation of the non-existing topics when publishing/subscribing
     public isolated function init(boolean autoCreateTopics = true) {
         self.topics = {};
-        self.isClosed = false;
+        self.closed = false;
         self.autoCreateTopics = autoCreateTopics;
-        self.pipe = new(0);
+        self.pipe = new (0);
         self.timer = new;
     }
 
     # Publishes events into a topic of the PubSub. That will be broadcast to all the subscribers of that topic.
     #
-    # + topicName - The name of the topic which is used to publish events
+    # + topic - The name of the topic which is used to publish events
     # + event - Event that needs to be published to PubSub. Can be `any` type
     # + timeout - The maximum waiting period to hold events. Set the timeout to `-1` to wait without a time limit.
     # + return - Returns `()` if event is successfully published. Otherwise, returns a `pubsub:Error`
-    public function publish(string topicName, any event, decimal timeout = 30) returns Error? {
-        if self.isClosed {
+    public isolated function publish(string topic, Event event, decimal timeout = 30) returns Error? {
+        if self.isClosed() {
             return error Error("Events cannot be published to a closed PubSub");
         }
         if event == () {
             return error Error("Nil values cannot be published to a PubSub");
         }
-        if !self.topics.hasKey(topicName) {
-            if !self.autoCreateTopics {
-                return error Error(string `Topic "${topicName}" does not exist`);
+        if !self.hasTopic(topic) {
+            lock {
+                if !self.autoCreateTopics {
+                    return error Error(string `Topic "${topic}" does not exist`);
+                }
             }
-            check self.createTopic(topicName);
+            check self.createTopic(topic);
         }
-        pipe:Pipe[] pipes = self.topics.get(topicName);
-        check self.produceAll(pipes, event, timeout, topicName);
+        check self.produceToTopic(topic, event, timeout);
     }
 
-    private function produceAll(pipe:Pipe[] pipes, any event, decimal timeout, string topicName) returns Error? {
+    private isolated function produceToTopic(string topic, Event event, decimal timeout) returns Error? {
         pipe:Pipe[] removedPipes = [];
         future<pipe:Error?>[] waitingQueue = [];
+
+        pipe:Pipe[] pipes = [];
+        lock {
+            pipe:Pipe[] topicPipes = self.topics.get(topic);
+            foreach int i in 0..<topicPipes.length() {
+                pipes[i] = topicPipes[i];
+            }
+        }
+
         foreach pipe:Pipe pipe in pipes {
             if !pipe.isClosed() {
                 future<pipe:Error?> asyncValue = start self.produceEvents(pipe, event, timeout);
@@ -71,12 +81,12 @@ public class PubSub {
                 removedPipes.push(pipe);
             }
         }
-        Error? unsubscribeResult = self.unsubscribeClosedPipes(removedPipes, topicName);
+        Error? unsubscribeResult = self.unsubscribeClosedPipes(removedPipes, topic);
         check self.waitForProduceCompletion(waitingQueue);
         return unsubscribeResult;
     }
 
-    private isolated function produceEvents(pipe:Pipe pipe, any event, decimal timeout) returns pipe:Error? {
+    private isolated function produceEvents(pipe:Pipe pipe, Event event, decimal timeout) returns pipe:Error? {
         check pipe.produce(event, timeout);
     }
 
@@ -110,7 +120,7 @@ public class PubSub {
     # + return - Returns `stream` if the user is successfully subscribed to the topic. Otherwise returns a
     # `pubsub:Error`
     public isolated function subscribe(string topicName, int 'limit = 5, decimal timeout = 30,
-                                       typedesc<any> typeParam = <>)
+                                        typedesc<any> typeParam = <>)
         returns stream<typeParam, error?>|Error = @java:Method {
         'class: "io.xlibb.pubsub.PubSub"
     } external;
@@ -134,7 +144,7 @@ public class PubSub {
     # + topicName - The name of the topic which is used to publish/subscribe
     # + return - Returns `()` if the topic is successfully added to the PubSub. Otherwise returns a `pubsub:Error`
     public isolated function createTopic(string topicName) returns Error? {
-        if self.isClosed {
+        if self.isClosed() {
             return error Error("Topics cannot be created in a closed PubSub");
         }
         lock {
@@ -153,10 +163,10 @@ public class PubSub {
         if timeout < 0d {
             return error Error("Shutdown timout cannot be a negative value");
         }
-        if self.isClosed {
+        if self.isClosed() {
             return error Error("Closing of a closed PubSub is not allowed");
         }
-        self.isClosed = true;
+        self.close();
         lock {
             if self.topics != {} {
                 runtime:sleep(timeout);
@@ -169,10 +179,12 @@ public class PubSub {
     #
     # + return - Returns `()`, if the PubSub is successfully shutdown. Otherwise returns a `pubsub:Error`
     public isolated function forceShutdown() returns Error? {
-        if self.isClosed && self.topics == {} {
-            return error Error("Closing of a closed PubSub is not allowed");
+        lock {
+            if self.isClosed() && self.isEmpty() {
+                return error Error("Closing of a closed PubSub is not allowed");
+            }
         }
-        self.isClosed = true;
+        self.close();
         lock {
             pipe:Error? closingError = ();
             foreach pipe:Pipe[] pipes in self.topics {
@@ -187,6 +199,30 @@ public class PubSub {
             if closingError != () {
                 return error Error("Failed to shut down the pubsub", closingError);
             }
+        }
+    }
+
+    private isolated function isClosed() returns boolean {
+        lock {
+            return self.closed;
+        }
+    }
+
+    private isolated function close() {
+        lock {
+            self.closed = true;
+        }
+    }
+
+    private isolated function hasTopic(string topic) returns boolean {
+        lock {
+            return self.topics.hasKey(topic);
+        }
+    }
+
+    private isolated function isEmpty() returns boolean {
+        lock {
+            return self.topics.length() == 0;
         }
     }
 }

@@ -226,3 +226,14 @@ function testInvalidTimoutForGracefulShutdown() returns error? {
     string expectedValue = "Shutdown timout cannot be a negative value";
     test:assertEquals((<Error>result).message(), expectedValue);
 }
+
+@test:Config {
+    groups: ["errors", "test"]
+}
+function testInvalidTimoutForSubscribe() returns error? {
+    PubSub pubsub = new();
+    stream<string, error?>|error result = pubsub.subscribe("topic", 5, -10);
+    test:assertTrue(result is error);
+    // string expectedValue = "Shutdown timout cannot be a negative value";
+    // test:assertEquals((<Error>result).message(), expectedValue);
+}

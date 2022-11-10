@@ -33,7 +33,7 @@ public class Utils {
 
     // Internal type names
     public static final BString AUTO_CREATE_TOPICS = StringUtils.fromString("autoCreateTopics");
-    public static final BString IS_CLOSED = StringUtils.fromString("isClosed");
+    public static final BString IS_CLOSED = StringUtils.fromString("closed");
     public static final BString PIPE_FIELD_NAME = StringUtils.fromString("pipe");
     public static final BString TIMER_FIELD_NAME = StringUtils.fromString("timer");
     public static final BString TOPICS = StringUtils.fromString("topics");
@@ -42,6 +42,10 @@ public class Utils {
     public static final String PIPE_CLASS_NAME = "Pipe";
 
     public static BError createError(String message) {
-        return ErrorCreator.createError(getModule(), ERROR_TYPE, StringUtils.fromString(message), null, null);
+        return createError(message, null);
+    }
+
+    public static BError createError(String message, BError cause) {
+        return ErrorCreator.createError(getModule(), ERROR_TYPE, StringUtils.fromString(message), cause, null);
     }
 }
