@@ -27,7 +27,7 @@ function testPubSub() returns error? {
         hello: "World"
     };
     stream<json, error?> subscribe = check pubsub.subscribe(topicName, 10);
-    check pubsub.publish(topicName, expectedValue, 5);
+    check pubsub.publish(topicName, expectedValue.cloneReadOnly(), 5);
     record {|json value;|}? msg = check subscribe.next();
     json actualValue = (<record {|json value;|}>msg).value;
     test:assertEquals(actualValue, expectedValue);

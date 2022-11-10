@@ -4,6 +4,8 @@ import io.ballerina.runtime.api.Future;
 import io.ballerina.runtime.api.async.Callback;
 import io.ballerina.runtime.api.values.BError;
 
+import static io.xlibb.pubsub.utils.Utils.createError;
+
 /**
  * Callback class for running Ballerina methods in PubSub Native code.
  */
@@ -16,11 +18,16 @@ public class MethodCallback implements Callback {
 
     @Override
     public void notifySuccess(Object o) {
-        this.future.complete(o);
+        if (o instanceof BError) {
+            this.notifyFailure((BError) o);
+        } else {
+            this.future.complete(o);
+        }
     }
 
     @Override
     public void notifyFailure(BError bError) {
-        this.future.complete(bError);
+        BError pubsubError = createError("Failed to subscribe to topic", bError);
+        this.future.complete(pubsubError);
     }
 }
