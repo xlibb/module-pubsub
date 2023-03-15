@@ -22,6 +22,8 @@ import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.StreamType;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
 import io.ballerina.runtime.api.values.BDecimal;
 import io.ballerina.runtime.api.values.BError;
@@ -51,9 +53,10 @@ public class PubSub {
             return createError("Users cannot subscribe to a closed PubSub");
         }
         BObject defaultPipe = pubsub.getObjectValue(PIPE_FIELD_NAME);
+        Type pipeType = TypeUtils.getReferredType(defaultPipe.getType());
         BObject defaultTimer = pubsub.getObjectValue(TIMER_FIELD_NAME);
         Object[] fields = new Object[]{limit, defaultTimer};
-        BObject pipe = ValueCreator.createObjectValue(defaultPipe.getType().getPackage(), PIPE_CLASS_NAME, fields);
+        BObject pipe = ValueCreator.createObjectValue(pipeType.getPackage(), PIPE_CLASS_NAME, fields);
         try {
             addSubscriber(pubsub, topicName, pipe);
         } catch (BError bError) {
@@ -79,7 +82,8 @@ public class PubSub {
             if (!autoCreateTopics) {
                 throw createError("Topic \"" + topicName + "\" does not exist");
             }
-            BArray pipes = ValueCreator.createArrayValue(TypeCreator.createArrayType(pipe.getType()));
+            Type pipeType = TypeUtils.getReferredType(pipe.getType());
+            BArray pipes = ValueCreator.createArrayValue(TypeCreator.createArrayType(pipeType));
             pipes.append(pipe);
             topics.put(topicName, pipes);
         } else {

@@ -1,13 +1,13 @@
 [package]
 org = "xlibb"
 name = "pubsub"
-version = "1.3.0"
+version = "1.4.0"
 authors = ["xlibb"]
 keywords = ["pubsub"]
 repository = "https://github.com/xlibb/module-pubsub"
 license = ["Apache-2.0"]
-distribution = "2201.2.0"
+distribution = "2201.4.0"
 icon = "icon.png"
 
 [[platform.java11.dependency]]
-path = "../native/build/libs/pubsub-native-1.3.0.jar"
+path = "../native/build/libs/pubsub-native-1.4.0-SNAPSHOT.jar"
