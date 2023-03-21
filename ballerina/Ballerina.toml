@@ -11,9 +11,3 @@ icon = "icon.png"
 
 [[platform.java11.dependency]]
 path = "../native/build/libs/pubsub-native-1.4.1-SNAPSHOT.jar"
-
-[[dependency]]
-org = "xlibb"
-name = "pipe"
-version = "1.4.1"
-repository="local"
