@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/xlibb/module-pubsub/branch/main/graph/badge.svg)](https://codecov.io/gh/xlibb/module-pubsub)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/xlibb/module-pubsub.svg)](https://github.com/xlibb/module-pubsub/commits/main)
 [![Github issues](https://img.shields.io/github/issues/xlibb/module-pubsub/module/pubsub.svg?label=Open%20Issues)](https://github.com/xlibb/module-pubsub/labels/module%2Fpubsub)
+[![GraalVM Check](https://github.com/xlibb/module-pubsub/actions/workflows/build-with-bal-test-graalvm.yml/badge.svg)](https://github.com/xlibb/module-pubsub/actions/workflows/build-with-bal-test-graalvm.yml)
 
 This library provides an event transmission model with publish/subscribe APIs.
 
