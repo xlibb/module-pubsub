@@ -41,10 +41,10 @@ function testGracefulShutdown() returns error? {
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.gracefulShutdown();
     record {|string value;|}|error? msg = subscribe.next();
-    if msg !is () {
-        test:assertFail(string `Expected "()", received ${(typeof msg).toString()}`);
+    test:assertTrue(msg is error);
+    if msg is error {
+        test:assertEquals(msg.message(), "Events must not be consumed from a closed pipe");
     }
-
     string expectedValue = "Users cannot subscribe to a closed PubSub";
     stream<string, error?>|Error new_subscriber = pubsub.subscribe("topic");
     test:assertTrue(new_subscriber is Error);
@@ -64,10 +64,10 @@ function testForceShutdown() returns error? {
     stream<string, error?> subscribe = check pubsub.subscribe("topic");
     check pubsub.forceShutdown();
     record {|string value;|}|error? msg = subscribe.next();
-    if msg !is () {
-        test:assertFail(string `Expected "()", received ${(typeof msg).toString()}`);
+    test:assertTrue(msg is error);
+    if msg is error {
+        test:assertEquals(msg.message(), "Events must not be consumed from a closed pipe");
     }
-
     string expectedValue = "Users cannot subscribe to a closed PubSub";
     stream<string, error?>|Error new_subscriber = pubsub.subscribe("topic");
     test:assertTrue(new_subscriber is Error);

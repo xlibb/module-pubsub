@@ -17,11 +17,8 @@
 package io.xlibb.pubsub;
 
 import io.ballerina.runtime.api.Environment;
-import io.ballerina.runtime.api.Future;
-import io.ballerina.runtime.api.PredefinedTypes;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
-import io.ballerina.runtime.api.types.StreamType;
 import io.ballerina.runtime.api.types.Type;
 import io.ballerina.runtime.api.utils.TypeUtils;
 import io.ballerina.runtime.api.values.BArray;
@@ -32,6 +29,8 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 
+import java.util.concurrent.CompletableFuture;
+
 import static io.xlibb.pubsub.utils.Utils.AUTO_CREATE_TOPICS;
 import static io.xlibb.pubsub.utils.Utils.CONSUME_STREAM_METHOD;
 import static io.xlibb.pubsub.utils.Utils.IS_CLOSED;
@@ -40,6 +39,7 @@ import static io.xlibb.pubsub.utils.Utils.PIPE_FIELD_NAME;
 import static io.xlibb.pubsub.utils.Utils.TIMER_FIELD_NAME;
 import static io.xlibb.pubsub.utils.Utils.TOPICS;
 import static io.xlibb.pubsub.utils.Utils.createError;
+import static io.xlibb.pubsub.utils.Utils.getResult;
 
 /**
  * Provides a message communication model with publish/subscribe APIs.
@@ -62,16 +62,19 @@ public class PubSub {
         } catch (BError bError) {
             return bError;
         }
-        Object[] arguments = new Object[]{timeout, true, typeParam, true};
-        Future future = environment.markAsync();
-        StreamType streamType = TypeCreator.createStreamType(typeParam.getDescribingType(),
-                                                             TypeCreator.createUnionType(PredefinedTypes.TYPE_ERROR,
-                                                                                         PredefinedTypes.TYPE_NULL));
+        Object[] arguments = new Object[]{timeout, typeParam};
+        CompletableFuture<Object> future = new CompletableFuture<>();
         MethodCallback callback = new MethodCallback(future);
-        environment.getRuntime()
-                .invokeMethodAsyncConcurrently(pipe, CONSUME_STREAM_METHOD, null, null, callback, null, streamType,
-                                               arguments);
-        return null;
+        return environment.yieldAndRun(() -> {
+            try {
+                Object result = environment.getRuntime().startIsolatedWorker(pipe, CONSUME_STREAM_METHOD, null,
+                        null,  null, arguments).get();
+                callback.notifySuccess(result);
+            } catch (BError bError) {
+                callback.notifyFailure(bError);
+            }
+            return getResult(future);
+        });
     }
 
     @SuppressWarnings("unchecked")
