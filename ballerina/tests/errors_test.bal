@@ -139,7 +139,7 @@ function testClosingPubSubWithClosedStream() returns error? {
     test:assertEquals(pubsubError.message(), expectedMessage);
     error? cause = pubsubError.cause();
     test:assertTrue(cause is error);
-    expectedMessage = "Closing of a closed pipe is not allowed";
+    expectedMessage = "Attempting to close an already closed pipe";
     test:assertEquals((<error>cause).message(), expectedMessage);
 }
 
