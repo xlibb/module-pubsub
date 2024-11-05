@@ -65,7 +65,7 @@ public class PubSub {
         Object[] arguments = new Object[]{timeout, typeParam};
         CompletableFuture<Object> future = new CompletableFuture<>();
         MethodCallback callback = new MethodCallback(future);
-        return environment.yieldAndRun(() -> {
+        Thread.startVirtualThread(() -> {
             try {
                 Object result = environment.getRuntime().startIsolatedWorker(pipe, CONSUME_STREAM_METHOD, null,
                         null,  null, arguments).get();
@@ -73,8 +73,8 @@ public class PubSub {
             } catch (BError bError) {
                 callback.notifyFailure(bError);
             }
-            return getResult(future);
         });
+        return getResult(future);
     }
 
     @SuppressWarnings("unchecked")
