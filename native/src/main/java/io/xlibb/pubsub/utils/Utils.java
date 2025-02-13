@@ -21,6 +21,8 @@ import io.ballerina.runtime.api.utils.StringUtils;
 import io.ballerina.runtime.api.values.BError;
 import io.ballerina.runtime.api.values.BString;
 
+import java.util.concurrent.CompletableFuture;
+
 import static io.xlibb.pubsub.utils.ModuleUtils.getModule;
 
 /**
@@ -47,5 +49,13 @@ public class Utils {
 
     public static BError createError(String message, BError cause) {
         return ErrorCreator.createError(getModule(), ERROR_TYPE, StringUtils.fromString(message), cause, null);
+    }
+
+    public static Object getResult(CompletableFuture<Object> balFuture) {
+        try {
+            return balFuture.get();
+        } catch (Throwable throwable) {
+            throw ErrorCreator.createError(throwable);
+        }
     }
 }
