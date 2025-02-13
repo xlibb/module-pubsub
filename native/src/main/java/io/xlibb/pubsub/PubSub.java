@@ -17,6 +17,7 @@
 package io.xlibb.pubsub;
 
 import io.ballerina.runtime.api.Environment;
+import io.ballerina.runtime.api.concurrent.StrandMetadata;
 import io.ballerina.runtime.api.creators.TypeCreator;
 import io.ballerina.runtime.api.creators.ValueCreator;
 import io.ballerina.runtime.api.types.Type;
@@ -29,8 +30,10 @@ import io.ballerina.runtime.api.values.BObject;
 import io.ballerina.runtime.api.values.BString;
 import io.ballerina.runtime.api.values.BTypedesc;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import static io.xlibb.pubsub.utils.ModuleUtils.getProperties;
 import static io.xlibb.pubsub.utils.Utils.AUTO_CREATE_TOPICS;
 import static io.xlibb.pubsub.utils.Utils.CONSUME_STREAM_METHOD;
 import static io.xlibb.pubsub.utils.Utils.IS_CLOSED;
@@ -67,8 +70,9 @@ public class PubSub {
         MethodCallback callback = new MethodCallback(future);
         Thread.startVirtualThread(() -> {
             try {
-                Object result = environment.getRuntime().startIsolatedWorker(pipe, CONSUME_STREAM_METHOD, null,
-                        null,  null, arguments).get();
+                Map<String, Object> properties = getProperties(CONSUME_STREAM_METHOD);
+                Object result = environment.getRuntime().callMethod(pipe, CONSUME_STREAM_METHOD,
+                        new StrandMetadata(true, properties), arguments);
                 callback.notifySuccess(result);
             } catch (BError bError) {
                 callback.notifyFailure(bError);
