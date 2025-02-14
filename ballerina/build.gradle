@@ -104,6 +104,7 @@ publishing {
 updateTomlFiles.dependsOn copyStdlibs
 
 build.dependsOn ":pubsub-native:build"
+test.dependsOn ":pubsub-native:build"
 build.dependsOn "generatePomFileForMavenPublication"
 publishToMavenLocal.dependsOn build
 publish.dependsOn build

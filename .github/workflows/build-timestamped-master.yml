@@ -47,7 +47,10 @@ jobs:
                 run: ./gradlew publish --no-daemon --scan
 
             -   name: Generate CodeCov Report
-                uses: codecov/codecov-action@v2
+                uses: codecov/codecov-action@v5
+                with:
+                    token: ${{ secrets.CODECOV_TOKEN }}
+                    slug: xlibb/module-pubsub
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v4
                 with:

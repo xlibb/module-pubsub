@@ -25,8 +25,11 @@ jobs:
                     packagePAT: ${{ secrets.GITHUB_TOKEN }}
                 run: ./gradlew build --no-daemon --scan
 
-            -   name: Generate Codecov Report
-                uses: codecov/codecov-action@v2
+            -   name: Generate CodeCov Report
+                uses: codecov/codecov-action@v5
+                with:
+                    token: ${{ secrets.CODECOV_TOKEN }}
+                    slug: xlibb/module-pubsub
 
     windows-build:
         name: Build on Windows
