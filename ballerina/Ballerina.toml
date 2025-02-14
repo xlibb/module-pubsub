@@ -10,4 +10,4 @@ distribution = "2201.11.0"
 icon = "icon.png"
 
 [[platform.java21.dependency]]
-path = "../native/build/libs/pubsub-native-1.5.0-SNAPSHOT.jar"
+path = "../native/build/libs/pubsub-native-1.5.0.jar"
